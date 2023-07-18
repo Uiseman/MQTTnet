@@ -15,17 +15,16 @@ namespace TesteMQTT.Models
 
         public IManagedMqttClient mqttClient{get;set;}
 
-        public MQTTClientHandlers(IManagedMqttClient _mqttClient)
+        public MQTTClientHandlers(IManagedMqttClient _mqttClient, List<IMQTTHandler> _handlers )
         {
+            Handlers =new List<IMQTTHandler>();
             mqttClient=_mqttClient;
-        }
-
-        public void AddClients(List<IMQTTHandler> _handlers ){
             _handlers.ForEach(element=>{
                 Handlers.Add(element);
             });
         }
 
+        
 
         public async Task ClientReceivedMessage(MqttApplicationMessageReceivedEventArgs e){
             try{
@@ -38,7 +37,7 @@ namespace TesteMQTT.Models
                     if(handleToCall is null){
                         Console.WriteLine($"Nenhum handle para {topic} encontrado");
                     } else {
-                        await handleToCall.handlerFunction(data,mqttClient);
+                        await handleToCall.handlerFunction(data);
                     }
 
             }catch(Exception error){
@@ -55,7 +54,7 @@ namespace TesteMQTT.Models
             Console.WriteLine("Disconnected");
             return Task.CompletedTask;
         }
-        Task ClientConnectingFailedAsync(ConnectingFailedEventArgs arg)
+        public Task ClientConnectingFailedAsync(ConnectingFailedEventArgs arg)
         {
             Console.WriteLine("Connection failed check network or broker!");
             return Task.CompletedTask;

@@ -11,17 +11,20 @@ namespace TesteMQTT.Handlers
 {
     public class questionMsgHandler : IMQTTHandler
     {   
-        public questionMsgHandler(String _receivedTopic,String _sendingTopic)
+        public questionMsgHandler(String _receivedTopic,String _sendingTopic,IManagedMqttClient _mqttClient)
         {
             receivedTopic=_receivedTopic;
             sendingTopic=_sendingTopic;
+            mqttClient=_mqttClient;
         }
        
         public String receivedTopic {get; set;}
 
         public String sendingTopic {get; set;}
 
-        public async Task handlerFunction(string msg, IManagedMqttClient _mqttClient)
+        public IManagedMqttClient mqttClient {get; set;}
+
+        public async Task handlerFunction(string msg)
         {    
             try{
 
@@ -33,7 +36,7 @@ namespace TesteMQTT.Handlers
                  new { response = response, 
                       timestamp = DateTime.UtcNow });
 
-                 await _mqttClient.EnqueueAsync(sendingTopic, json);
+                 await mqttClient.EnqueueAsync(sendingTopic, json);
             
 
             }catch(Exception error){

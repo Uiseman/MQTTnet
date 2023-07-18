@@ -8,6 +8,8 @@ namespace TesteMQTT.Interfaces
 
         public String sendingTopic {get; set;}
 
-         Task handlerFunction(String msg, IManagedMqttClient _mqttClient);
+        public IManagedMqttClient mqttClient {get; set;}
+
+         Task handlerFunction(String msg);
     }
 }

@@ -11,18 +11,21 @@ namespace TesteMQTT.Handlers
 {
     public class msgHandler : IMQTTHandler
     {
-        public msgHandler(String _receivedTopic,String _sendingTopic)
+        public msgHandler(String _receivedTopic,String _sendingTopic,IManagedMqttClient _mqttClient)
         {
             receivedTopic=_receivedTopic;
             sendingTopic=_sendingTopic;
+            mqttClient=_mqttClient;
         }
        
         public String receivedTopic {get; set;}
 
         public String sendingTopic {get; set;}
 
+        public IManagedMqttClient mqttClient {get; set;}
 
-        public async Task handlerFunction(String msg, IManagedMqttClient _mqttClient){
+
+        public async Task handlerFunction(String msg){
             try {
 
                 MQTTmsg ? obj=JsonSerializer.Deserialize<MQTTmsg>(msg);
@@ -30,7 +33,7 @@ namespace TesteMQTT.Handlers
                 new { response = "response for "+ obj?.message, 
                       timestamp = DateTime.UtcNow });
 
-                await _mqttClient.EnqueueAsync(sendingTopic, json);
+                await mqttClient.EnqueueAsync(sendingTopic, json);
 
             } catch(Exception error){
                 Console.WriteLine($"ERRO: {error}");
